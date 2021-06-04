@@ -28,7 +28,7 @@ module.exports = {
     });
   },
   get: function (req, res) {
-    res.writeHead(200);
+    res.writeHead(302);
     res.end("GOT");
   },
 };
