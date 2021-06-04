@@ -10,6 +10,7 @@ module.exports = {
     await collection.insertOne({
       urlIdentificator,
       url,
+      createdAt: new Date(),
     });
     return urlIdentificator;
   },
