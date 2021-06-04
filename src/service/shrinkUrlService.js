@@ -10,4 +10,14 @@ module.exports = {
     await db.saveShrinkedUrl(url, thisUrlIdentificator);
     return thisUrlIdentificator;
   },
+  /**
+   * Receives an URL identificator and returns the desired URL.
+   * If URL not found, return null.
+   * @param {string} urlIdentificator URL identificator to find
+   */
+  getShrinkedUrl: async function (urlIdentificator, db) {
+    const foundUrl = await db.getShrinkedUrl(urlIdentificator);
+    if (!foundUrl) return null;
+    return foundUrl;
+  },
 };
