@@ -27,9 +27,21 @@ module.exports = {
       res.end(`${env.serverBaseEndpoint}/${urlIdentificator}`);
     });
   },
-  get: function (req, res) {
-    res.writeHead(302);
-    res.end("GOT");
+  get: async function (req, res) {
+    const urlIdToFind = req.url.split("/").join("");
+    const foundUrl = await shrinkUrlService.getShrinkedUrl(
+      urlIdToFind,
+      shrinkUrlInMemoryRepo
+    );
+    if (!foundUrl) {
+      res.writeHead(404);
+      res.end("Shrinked URL not found");
+      return;
+    }
+    res.writeHead(302, {
+      Location: foundUrl,
+    });
+    res.end();
   },
 };
 

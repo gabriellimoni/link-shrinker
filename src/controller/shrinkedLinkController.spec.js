@@ -55,17 +55,5 @@ describe("shrinkedLinkController", () => {
         expect(response.status).toBe(404);
       }
     );
-
-    test.each`
-      validPath          | reason
-      ${"/shrinked-id"}  | ${"Root path and one route param could be a url id"}
-      ${"/shrinked-id/"} | ${"Root path and one route param could be a url id even endind with '/'"}
-    `(
-      "Should return 302 if invalid path: $invalidPath. Reason: $reason",
-      async ({ validPath }) => {
-        const response = await request(server).get(validPath);
-        expect(response.status).toBe(302);
-      }
-    );
   });
 });
