@@ -10,6 +10,10 @@ module.exports = {
     return urlIdentificator;
   },
   getShrinkedUrl: async (urlIdentificator) => {
-    return urlMap.get(urlIdentificator);
+    const collection = await mongodb.getCollection("shrinked_urls");
+    const document = await collection.findOne({
+      urlIdentificator,
+    });
+    return document.url;
   },
 };
