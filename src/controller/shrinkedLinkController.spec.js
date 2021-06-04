@@ -1,6 +1,9 @@
 const request = require("supertest");
 const server = require("../server");
 
+// Mock so it wont execute on this tests
+jest.mock("../service/shrinkUrlService");
+
 describe("shrinkedLinkController", () => {
   describe("POST", () => {
     test("Should return 200 on POST success", async () => {
@@ -8,6 +11,7 @@ describe("shrinkedLinkController", () => {
         .post("/shrink")
         .send("http://any-url.com");
       expect(result.status).toBe(200);
+      expect(result.text).toEqual(expect.any(String));
     });
 
     test("Should return 404 on POST other urls", async () => {
