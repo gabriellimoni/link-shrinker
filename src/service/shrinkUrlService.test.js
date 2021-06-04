@@ -14,7 +14,7 @@ describe("shrinkUrlService", () => {
       saveShrinkedUrl: jest.fn(),
     };
     const urlToShrink = "any-url";
-    shrinkUrlService(urlToShrink, mockedDb);
+    shrinkUrlService.shrinkUrl(urlToShrink, mockedDb);
 
     expect(mockedDb.saveShrinkedUrl).toHaveBeenCalledWith(
       "any-url",
