@@ -3,6 +3,7 @@ const server = require("../server");
 
 // Mock so it wont execute on this tests
 jest.mock("../service/shrinkUrlService");
+jest.mock("../repository/mongoShrinkUrlRepository");
 
 describe("shrinkedLinkController", () => {
   describe("POST", () => {

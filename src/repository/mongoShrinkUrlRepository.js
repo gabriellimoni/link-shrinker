@@ -7,7 +7,7 @@ module.exports = {
     if (alreadyExistentShrink) {
       return alreadyExistentShrink.urlIdentificator;
     }
-    await collection.insert({
+    await collection.insertOne({
       urlIdentificator,
       url,
     });
