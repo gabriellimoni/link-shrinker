@@ -46,7 +46,7 @@ module.exports = {
 };
 
 function invalidData(data) {
-  if (!data.includes("http://") && !data.includes("https://")) return true;
+  if (!data.startsWith("http://") && !data.startsWith("https://")) return true;
   if (!data.includes(".")) return true;
   if (["."].includes(data.charAt(data.length - 1))) return true;
   if (data.includes(" ")) return true;

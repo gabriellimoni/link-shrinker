@@ -35,6 +35,7 @@ describe("shrinkedLinkController", () => {
       ${"http://invalid-url"}
       ${"http://invalid-url."}
       ${"http://invalid with spaces url.com"}
+      ${"!!!!https://valid.com"}
     `(
       "Should return 400 on POST if invalid URL ($invalidUrl) is sent",
       async ({ invalidUrl }) => {
