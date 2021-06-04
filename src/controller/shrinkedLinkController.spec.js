@@ -16,5 +16,25 @@ describe("shrinkedLinkController", () => {
         .send("http://any-url.com");
       expect(result.status).toBe(404);
     });
+
+    test("Should return 400 on POST if nothing is sent", async () => {
+      const result = await request(server).post("/shrink");
+      expect(result.status).toBe(400);
+    });
+
+    test.each`
+      invalidUrl
+      ${"invalid-url"}
+      ${"htp://invalid-url.com"}
+      ${"httpss://invalid-url.com"}
+      ${"http://invalid-url"}
+      ${"http://invalid-url."}
+    `(
+      "Should return 400 on POST if invalid URL ($invalidUrl) is sent",
+      async ({ invalidUrl }) => {
+        const result = await request(server).post("/shrink").send(invalidUrl);
+        expect(result.status).toBe(400);
+      }
+    );
   });
 });
