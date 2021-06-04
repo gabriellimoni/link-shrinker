@@ -1,5 +1,5 @@
 const env = require("../../env");
-const shrinkUrlInMemoryRepo = require("../repository/inMemoryShrinkUrlRepository");
+const shrinkUrlRepository = require("../repository/mongoShrinkUrlRepository");
 const shrinkUrlService = require("../service/shrinkUrlService");
 
 module.exports = {
@@ -21,7 +21,7 @@ module.exports = {
       }
       const urlIdentificator = await shrinkUrlService.shrinkUrl(
         data,
-        shrinkUrlInMemoryRepo
+        shrinkUrlRepository
       );
       res.writeHead(200);
       res.end(`${env.serverBaseEndpoint}/${urlIdentificator}`);
@@ -31,7 +31,7 @@ module.exports = {
     const urlIdToFind = req.url.split("/").join("");
     const foundUrl = await shrinkUrlService.getShrinkedUrl(
       urlIdToFind,
-      shrinkUrlInMemoryRepo
+      shrinkUrlRepository
     );
     if (!foundUrl) {
       res.writeHead(404);
