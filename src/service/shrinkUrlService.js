@@ -7,8 +7,11 @@ module.exports = {
    */
   shrinkUrl: async function (url, db) {
     const thisUrlIdentificator = uuid.v4();
-    await db.saveShrinkedUrl(url, thisUrlIdentificator);
-    return thisUrlIdentificator;
+    const committedIdentificator = await db.saveShrinkedUrl(
+      url,
+      thisUrlIdentificator
+    );
+    return committedIdentificator;
   },
   /**
    * Receives an URL identificator and returns the desired URL.
