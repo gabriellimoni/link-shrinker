@@ -1,0 +1,17 @@
+{
+  "name": "link-shrinker",
+  "version": "1.0.0",
+  "description": "Link shrinker API",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "jest --silent --detectOpenHandles"
+  },
+  "author": "Gabriel Limoni",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^27.0.4",
+    "nodemon": "^2.0.7"
+  }
+}
