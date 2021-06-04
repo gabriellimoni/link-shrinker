@@ -28,12 +28,12 @@ describe("mongoShrinkUrlRepository", () => {
     expect(foundUrl).toBe("any-url");
   });
 
-  // test("Should return current url identificator if url already exists", async () => {
-  //   await saveShrinkedUrl("same-url", "same-url-identificator");
-  //   const savedIdentificator = await saveShrinkedUrl(
-  //     "same-url",
-  //     "another-url-identificator"
-  //   );
-  //   expect(savedIdentificator).toBe("same-url-identificator");
-  // });
+  test("Should return current url identificator if url already exists", async () => {
+    await saveShrinkedUrl("same-url", "same-url-identificator");
+    const savedIdentificator = await saveShrinkedUrl(
+      "same-url",
+      "another-url-identificator"
+    );
+    expect(savedIdentificator).toBe("same-url-identificator");
+  });
 });
