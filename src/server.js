@@ -9,6 +9,15 @@ const requestListener = function (req, res) {
     res.end(htmlContent);
     return;
   }
+  if (
+    req.method.toUpperCase() === "GET" &&
+    req.url.toLowerCase() === "/favicon.ico"
+  ) {
+    res.writeHead(200);
+    res.end(); // TODO
+    return;
+  }
+
   entrypointChecking(req, res);
   if (res.finished) return;
   if (req.method.toUpperCase() === "POST") {
