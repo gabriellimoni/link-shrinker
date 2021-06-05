@@ -1,7 +1,14 @@
 const http = require("http");
 const shrinkedLinkController = require("./controller/shrinkedLinkController");
+const { getHtmlContent } = require("./htmlContent");
 
 const requestListener = function (req, res) {
+  if (req.method.toUpperCase() === "GET" && req.url.toLowerCase() === "/") {
+    const htmlContent = getHtmlContent();
+    res.writeHead(200);
+    res.end(htmlContent);
+    return;
+  }
   entrypointChecking(req, res);
   if (res.finished) return;
   if (req.method.toUpperCase() === "POST") {
