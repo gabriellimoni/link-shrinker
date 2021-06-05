@@ -4,9 +4,139 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        height: 100vh;
+      }
+    </style>
     <title>Shrink your link</title>
   </head>
   <body>
-    <h1>Testeeeeee</h1>
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand">Shrink your link</a>
+    </nav>
+    <div class="container-fluid mt-4">
+      <div class="row justify-content-center">
+        <div class="col-sm-10 col-md-8 col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-subtitle mb-2 text-muted text-center mb-4">
+                Enter your link below then press
+                <code>SHRINK</code>.
+              </h2>
+              <div class="form-group">
+                <input
+                  id="urlInput"
+                  type="url"
+                  class="form-control"
+                  placeholder="https://some-cool-link.com"
+                />
+                <button
+                  type="button"
+                  class="btn btn-danger btn-block mt-2"
+                  onclick="handleShrinkForm()"
+                >
+                  SHRINK
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="alertSuccessContainer"
+            class="alert alert-success"
+            role="alert"
+            style="display: none"
+          >
+            <b>Shrinked url successfuly!</b><br />
+            <div id="alertSuccessText"></div>
+          </div>
+          <div
+            id="alertErrorContainer"
+            class="alert alert-danger"
+            role="alert"
+            style="display: none"
+          >
+            <b>Shrinked url error!</b><br />
+            <div id="alertErrorText"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      $("#urlInput").on("keydown", function (e) {
+        if (e.key !== "Enter") return;
+        handleShrinkForm();
+      });
+      async function handleShrinkForm() {
+        const input = $("#urlInput");
+        const inputValue = input.val();
+        try {
+          const shrinkedUrl = await requestShrinkUrl(inputValue);
+          handleShrinkUrlSuccess({
+            url: inputValue,
+            shrinkedUrl,
+          });
+        } catch (error) {
+          console.error(error);
+          handleShrinkUrlError({
+            url: inputValue,
+            error,
+          });
+        }
+      }
+
+      function requestShrinkUrl(urlToShrink) {
+        return new Promise((resolve, reject) => {
+          $.ajax({
+            method: "POST",
+            url: "/shrink",
+            data: urlToShrink,
+          })
+            .done(function (data) {
+              resolve(data);
+            })
+            .fail(function (err) {
+              const errorMessage =
+                err.responseText || "Error calling Shrink Link API";
+              reject(errorMessage);
+            });
+        });
+      }
+
+      function handleShrinkUrlSuccess({ url, shrinkedUrl }) {
+        const alertSuccessContent = `${url} <b>--></b> ${shrinkedUrl}`;
+        $("#alertSuccessText").html(alertSuccessContent);
+        $("#alertSuccessContainer").css("display", "block");
+        $("#alertErrorContainer").css("display", "none");
+      }
+
+      function handleShrinkUrlError({ url, error }) {
+        const alertErrorContent = `${url}: ${error}`;
+        $("#alertErrorText").html(alertErrorContent);
+        $("#alertErrorContainer").css("display", "block");
+        $("#alertSuccessContainer").css("display", "none");
+      }
+    </script>
   </body>
 </html>

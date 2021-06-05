@@ -48,7 +48,6 @@ describe("shrinkedLinkController", () => {
   describe("GET", () => {
     test.each`
       invalidPath           | reason
-      ${"/"}                | ${"Root path is not a valid url identificator"}
       ${"/other/long-path"} | ${"Other path is not a valid url identificator"}
     `(
       "Should return 404 if invalid path: $invalidPath. Reason: $reason",
