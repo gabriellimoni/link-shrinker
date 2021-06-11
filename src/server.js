@@ -1,65 +1,43 @@
-const http = require("http");
-const shrinkedLinkController = require("./controller/shrinkedLinkController");
-const { getHtmlContent } = require("./htmlContent");
+const qws = require("quick-webservice");
+const env = require("../env");
+const shrinkUrlService = require("./service/shrinkUrlService");
+const shrinkUrlRepository = require("./repository/mongoShrinkUrlRepository");
 
-const requestListener = function (req, res) {
-  if (req.method.toUpperCase() === "GET" && req.url.toLowerCase() === "/") {
-    const htmlContent = getHtmlContent();
-    res.writeHead(200);
-    res.end(htmlContent);
-    return;
-  }
-  if (
-    req.method.toUpperCase() === "GET" &&
-    req.url.toLowerCase() === "/favicon.ico"
-  ) {
-    res.writeHead(200);
-    res.end(); // TODO
-    return;
-  }
+const app = qws.build({ parseJson: true, timeout: 1000 });
 
-  entrypointChecking(req, res);
-  if (res.finished) return;
-  if (req.method.toUpperCase() === "POST") {
-    return shrinkedLinkController.post(req, res);
-  } else if (req.method.toUpperCase() === "GET") {
-    return shrinkedLinkController.get(req, res);
+app.get("/:id", async function (req, res) {
+  const urlIdToFind = req.url.split("/").join("");
+  const foundUrl = await shrinkUrlService.getShrinkedUrl(
+    urlIdToFind,
+    shrinkUrlRepository
+  );
+  if (!foundUrl) {
+    return { status: 404, data: { message: "Shrinked URL not found" } };
   }
-  res.writeHead(405);
-  res.end("Method not allowed");
-};
+  res.writeHead(302, {
+    Location: foundUrl,
+  });
+  res.end();
+});
 
-function entrypointChecking(req, res) {
-  if (req.method.toUpperCase() === "POST") {
-    if (req.url.toLowerCase() !== "/shrink") {
-      res.writeHead(404);
-      res.end(`Route ${req.url} not found`);
-      return;
-    }
+app.post("/shrink", async function (req) {
+  const data = req.body;
+  if (invalidData(data)) {
+    return { status: 400, data: { message: "Invalid data sent" } };
   }
-  if (req.method.toUpperCase() === "GET") {
-    const splittedBySlash = req.url.toLowerCase().split("/");
-    // "/other/long-path" is invalid
-    if (splittedBySlash.length > 3) {
-      res.writeHead(404);
-      res.end(`Route ${req.url} not found`);
-      return;
-    }
-    // "/shrinked-id/" must be valid
-    if (splittedBySlash.length === 3 && splittedBySlash[2].trim() !== "") {
-      res.writeHead(404);
-      res.end(`Route ${req.url} not found`);
-      return;
-    }
-    // "/" is invalid
-    if (splittedBySlash[1].trim() === "") {
-      res.writeHead(404);
-      res.end(`Route ${req.url} not found`);
-      return;
-    }
-  }
+  const urlIdentificator = await shrinkUrlService.shrinkUrl(
+    data,
+    shrinkUrlRepository
+  );
+  return `${env.serverBaseEndpoint}/${urlIdentificator}`;
+});
+
+function invalidData(data) {
+  if (!data.startsWith("http://") && !data.startsWith("https://")) return true;
+  if (!data.includes(".")) return true;
+  if (["."].includes(data.charAt(data.length - 1))) return true;
+  if (data.includes(" ")) return true;
+  return false;
 }
 
-const server = http.createServer(requestListener);
-
-module.exports = server;
+module.exports = app.server;
